@@ -1,0 +1,46 @@
+# The blueprint of Watanabe, *Algebraic Geometry and Statistical Learning Theory*: a
+# reference-only Verso document over the library (see README.md).
+# Nested Lake package; `lake exe vbp build` from this directory writes _out/site/html-multi.
+name = "Blueprint"
+defaultTargets = ["Blueprint"]
+# Share the parent's dependency checkouts (Mathlib and the rest) instead of cloning them again.
+packagesDir = "../.lake/packages"
+
+[leanOptions]
+experimental.module = true
+
+# The library this document describes: the enclosing package, built in place.
+[[require]]
+name = "slt"
+path = ".."
+
+# VersoBlueprint is the Timaeus fork of leanprover/verso-blueprint (the annotation directives and
+# the external-declaration rendering), pinned to a commit on its release branch for this
+# package's toolchain, `timaeus/v4.35.0`. Its verso patches are not needed by this blueprint and
+# are not applied.
+[[require]]
+name = "VersoBlueprint"
+git = "https://github.com/timaeus-research/verso-blueprint.git"
+rev = "72b25c323713e9b96585d3d5fce950dfb754f2f2"
+
+# Mathlib LAST so its transitive dependency pins win over VersoBlueprint's (Verso pins a different
+# plausible), keeping the shared package directory valid. Keep this rev in sync with the parent
+# lakefile.toml's Mathlib pin.
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0"
+
+# The bibliography of the library, read by `Blueprint.References` when it is compiled.
+[[input_file]]
+name = "references"
+path = "../references.bib"
+text = true
+
+[[lean_lib]]
+name = "BlueprintReferences"
+roots = ["Blueprint.References"]
+needs = ["references"]
+
+[[lean_lib]]
+name = "Blueprint"

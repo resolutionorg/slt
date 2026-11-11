@@ -1,0 +1,127 @@
+# Checks the main theorems with leanprover/comparator: that the library `SLT` proves exactly the
+# statements of the challenge files (the theorems named in comparator.json), using no axioms beyond
+# the ones comparator.json permits, and that its proofs replay in the Lean kernel. Paths are
+# relative to the repository root, the directory of lakefile.toml.
+#
+# Comparator is run as its README describes, from a fresh checkout: Mathlib comes from its cache
+# (`lake exe cache get`), and comparator itself builds `SLTChallenge` and then `SLT` in landrun
+# sandboxes, exports both with lean4export and compares them. The job therefore builds the library
+# from scratch and shares nothing with build.yml. It omits the README's `systemd-run` wrapper,
+# which guards against a landrun sandbox escape on Linux kernels before 7.1, as comparator's own CI
+# does: it detects a statement that drifts from its challenge copy and is no adversarial audit;
+# for that, run comparator per its README on a trusted host.
+#
+# The tools are pinned by commit: comparator (built with its own toolchain), lean4export (built
+# with this repository's toolchain, which it needs to read the .olean files; bump it with
+# lean-toolchain) and landrun (built with Go).
+name: comparator
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comparator-${{ github.ref }}
+  # A new push to a pull request cancels its running checks; runs on main always complete.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ELAN_VERSION: v4.2.4
+  GO_VERSION: 1.27.1
+  # leanprover/comparator, tag v4.35.0-rc3
+  COMPARATOR_COMMIT: fd5d5bcf14177b187f66d4502071268d877887c3
+  # leanprover/lean4export, tag v4.34.0
+  LEAN4EXPORT_COMMIT: 076e8e57707e813375e8f9da8bf989799ace9680
+  # Zouuup/landrun, main of 2026-07-23 (version 0.1.18); comparator asks for landrun built from main
+  LANDRUN_COMMIT: 811cfff51ceaf3d9843708aa6d22e9b84ccac8b4
+
+jobs:
+  verify:
+    name: Comparator
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      # A standard runner has about 14 GB of free disk: not enough for a Mathlib project build
+      # plus two Lean toolchains (this repository's and comparator's).
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force > /dev/null
+          df -h / | tail -1
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Install elan
+        run: |
+          curl -sSfL "https://github.com/leanprover/elan/releases/download/$ELAN_VERSION/elan-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar xz -C "$RUNNER_TEMP"
+          "$RUNNER_TEMP/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      # Outside the repository, so that the sandboxed builds see only the project.
+      - name: Fetch the tools
+        run: |
+          fetch() {  # fetch <GitHub repository> <commit> <directory>
+            git init -q "$3"
+            git -C "$3" fetch -q --depth 1 "https://github.com/$1" "$2"
+            git -C "$3" checkout -q --detach FETCH_HEAD
+            test "$(git -C "$3" rev-parse HEAD)" = "$2"
+          }
+          fetch leanprover/comparator "$COMPARATOR_COMMIT" "$RUNNER_TEMP/comparator"
+          fetch leanprover/lean4export "$LEAN4EXPORT_COMMIT" "$RUNNER_TEMP/lean4export"
+          fetch Zouuup/landrun "$LANDRUN_COMMIT" "$RUNNER_TEMP/landrun"
+
+      - name: Build landrun
+        working-directory: ${{ runner.temp }}/landrun
+        run: go build -trimpath -o landrun cmd/landrun/main.go
+
+      - name: Build lean4export with this repository's toolchain
+        run: |
+          cp lean-toolchain "$RUNNER_TEMP/lean4export/lean-toolchain"
+          cd "$RUNNER_TEMP/lean4export" && lake build lean4export
+
+      - name: Build comparator
+        working-directory: ${{ runner.temp }}/comparator
+        run: lake build comparator
+
+      - name: Fetch the Mathlib cache
+        run: lake exe cache get
+
+      # With the artifact cache on, Lake stores build outputs under ~/.cache/lake, which the
+      # sandbox mounts read-only (only the project's .lake is writable), so the sandboxed builds
+      # would fail. Lake reads the setting of each package from its own lakefile, so it is turned
+      # off in the checkout of hironaka that `lake exe cache get` made as well.
+      - name: Disable the Lake artifact cache
+        run: |
+          for f in lakefile.toml .lake/packages/hironaka/lakefile.toml; do
+            sed -i 's/^enableArtifactCache = true$/enableArtifactCache = false/' "$f"
+            grep -qx 'enableArtifactCache = false' "$f"
+          done
+
+      # Comparator passes only PATH and HOME into the sandbox, so PATH starts with the toolchain's
+      # own binaries rather than elan's proxies.
+      - name: Run comparator
+        run: |
+          prefix=$(lean --print-prefix)
+          export PATH="$prefix/bin:$PATH"
+          export COMPARATOR_LANDRUN="$RUNNER_TEMP/landrun/landrun"
+          export COMPARATOR_LEAN4EXPORT="$RUNNER_TEMP/lean4export/.lake/build/bin/lean4export"
+          lake env "$RUNNER_TEMP/comparator/.lake/build/bin/comparator" comparator.json

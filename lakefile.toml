@@ -1,0 +1,31 @@
+name = "slt"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["SLT"]
+enableArtifactCache = true
+license = "Apache-2.0"
+licenseFiles = ["LICENSE"]
+
+[leanOptions]
+pp.unicode.fun = true                  # print `fun a ↦ b`, so pasted output matches Mathlib style
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true  # Mathlib's standard linters
+weak.linter.style.header.license = "Released under Apache 2.0 license as described in the file LICENSE."
+maxSynthPendingDepth = 3               # Mathlib's setting
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0"
+
+[[require]]
+name = "hironaka"
+git = "https://github.com/resolutionorg/hironaka"
+rev = "v4.35.0"
+
+[[lean_lib]]
+name = "SLT"
+
+[[lean_lib]]
+name = "SLTChallenge"

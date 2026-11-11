@@ -1,0 +1,40 @@
+/* The label of an annotation box, which explains its kind on hover, focus or tap
+   (`annotation-labels.js`), and the popover holding the explanation. The label keeps its kind's
+   colour; the popover follows the blueprint's hover panels. */
+.bp-editorial-kind.bp-kind-help {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  border-radius: 0.2rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.bp-editorial-kind.bp-kind-help:hover,
+.bp-editorial-kind.bp-kind-help:focus-visible {
+  text-decoration-style: solid;
+}
+.bp-editorial-kind.bp-kind-help:focus { outline: none; }
+.bp-editorial-kind.bp-kind-help:focus-visible {
+  box-shadow: 0 0 0 0.16rem var(--bp-color-focus-ring, rgba(59, 130, 246, 0.12));
+}
+.bp-kind-popover {
+  position: fixed;
+  z-index: 40;
+  box-sizing: border-box;
+  max-width: min(22rem, calc(100vw - 16px));
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--bp-color-border, #cbd5e1);
+  border-left: 3px solid var(--bp-kind, #64748b);
+  border-radius: 0 var(--bp-radius-md, 0.45rem) var(--bp-radius-md, 0.45rem) 0;
+  background: var(--bp-color-surface, #ffffff);
+  color: var(--bp-color-text, #111827);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+  font-family: var(--verso-text-font-family, sans-serif);
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  pointer-events: none;
+}
+.bp-kind-popover[hidden] { display: none; }

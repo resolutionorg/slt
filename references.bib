@@ -1,0 +1,72 @@
+% The sources of the package: its one bibliography.
+%
+% The key of an entry is the key by which the docstrings and Markdown files cite the source,
+% followed by the source's own item number: [Wat09, Theorem 6.7], [Wat18, Definition 7],
+% [Hit26, Definition 2.3.3] (the thesis is cited by its own numbering). A main theorem that
+% formalizes an item of a source ends its docstring with the paragraph
+% `Source statement: [KEY, item]`, as in hironaka.
+%
+% To add a source: add its entry here and cite it. To drop a source, delete its entry with its
+% last citation. Accented letters are written as Unicode characters, and braces protect capitals
+% in titles.
+
+@Book{Wat09,
+  author = {Watanabe, Sumio},
+  title = {Algebraic Geometry and Statistical Learning Theory},
+  series = {Cambridge Monographs on Applied and Computational Mathematics},
+  volume = {25},
+  publisher = {Cambridge University Press},
+  year = {2009},
+  doi = {10.1017/CBO9780511800474},
+  note = {The grey book}
+}
+
+@Book{Wat18,
+  author = {Watanabe, Sumio},
+  title = {Mathematical Theory of {B}ayesian Statistics},
+  publisher = {CRC Press},
+  year = {2018},
+  doi = {10.1201/9781315373010},
+  note = {The green book}
+}
+
+@PhdThesis{Hit26,
+  author = {Hitchcock, Rohan},
+  title = {Singular learning theory for deep learning interpretability: stochastic sampling methods and applications to learning from physical systems},
+  school = {University of Melbourne},
+  year = {2026},
+  month = feb,
+  url = {https://hdl.handle.net/11343/371115}
+}
+
+@Misc{Lau24,
+  author = {Lau, Edmund and Furman, Zach and Wang, George and Murfet, Daniel and Wei, Susan},
+  title = {The Local Learning Coefficient: A Singularity-Aware Complexity Measure},
+  year = {2024},
+  eprint = {2308.12108},
+  archiveprefix = {arXiv}
+}
+
+@Article{Ati70,
+  author = {Atiyah, Michael F.},
+  title = {Resolution of singularities and division of distributions},
+  journal = {Communications on Pure and Applied Mathematics},
+  volume = {23},
+  number = {2},
+  year = {1970},
+  pages = {145--150},
+  doi = {10.1002/cpa.3160230202}
+}
+
+@Article{BM97,
+  author = {Bierstone, Edward and Milman, Pierre D.},
+  title = {Canonical desingularization in characteristic zero by blowing up the maximum strata of a local invariant},
+  journal = {Inventiones Mathematicae},
+  volume = {128},
+  year = {1997},
+  pages = {207--302},
+  doi = {10.1007/s002220050141},
+  eprint = {alg-geom/9508005},
+  archiveprefix = {arXiv},
+  url = {https://arxiv.org/abs/alg-geom/9508005}
+}

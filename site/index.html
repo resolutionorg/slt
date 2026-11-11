@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- The landing page of the documentation site. scripts/build_site.py fills the double-braced placeholders
+     and writes the result to the site root, beside docs/ (API documentation) and blueprint/. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Singular Learning Theory</title>
+<meta name="description" content="The main results of Watanabe's Algebraic Geometry and Statistical Learning Theory, formalized in Lean 4 over Mathlib: API documentation and blueprint.">
+<link rel="icon" href="docs/favicon.svg">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf7;
+    --fg: #1f2328;
+    --muted: #59636e;
+    --line: #d9d5cc;
+    --card: #ffffff;
+    --accent: #2f5f9e;
+    --code-bg: #f0eee8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e6e6e3;
+      --muted: #9aa3ad;
+      --line: #2c3138;
+      --card: #1c1f24;
+      --accent: #8ab4f8;
+      --code-bg: #23272e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+  main { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: ui-monospace, "JuliaMono", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.92em; }
+  h1 { font-size: 2rem; margin: 0 0 0.25rem; line-height: 1.2; }
+  .lede { color: var(--muted); font-size: 1.1rem; margin: 0 0 1.5rem; max-width: 44rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .card {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    color: inherit;
+  }
+  .card:hover { border-color: var(--accent); text-decoration: none; }
+  .card strong { display: block; font-size: 1.15rem; color: var(--accent); margin-bottom: 0.3rem; }
+  .card .mark { vertical-align: -0.2em; margin-right: 0.15em; }
+  .card p { margin: 0; color: var(--muted); }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  footer code { background: var(--code-bg); padding: 0.05em 0.3em; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Singular Learning Theory</h1>
+  <p class="lede">The main results of Sumio Watanabe's <em>Algebraic Geometry and Statistical
+    Learning Theory</em>, formalized in Lean 4 over Mathlib, with relatively finite variance in place
+    of realizability. Every theorem is proved: the library <code>SLT</code> contains no
+    <code>sorry</code>.</p>
+
+  <div class="cards">
+    <a class="card" href="{{REPO_URL}}">
+      <strong><svg class="mark" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> Source</strong>
+      <p>The repository on GitHub.</p>
+    </a>
+    <a class="card" href="blueprint/">
+      <strong>Blueprint</strong>
+      <p>The statements of the library, explained against their sources, embedding the declarations
+        from the library.</p>
+    </a>
+    <a class="card" href="docs/">
+      <strong>API documentation</strong>
+      <p>Generated from library code and comments.</p>
+    </a>
+  </div>
+
+  <footer>
+    Built from <a href="{{REPO_URL}}/tree/{{SOURCE_REF}}">the <code>{{SOURCE_REF}}</code> branch</a>
+    on {{BUILT_AT}} with <code>{{TOOLCHAIN}}</code>.
+  </footer>
+</main>
+</body>
+</html>
